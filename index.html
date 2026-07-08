@@ -1,9 +1,9 @@
-<!<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Color Space Converter</title>
+    <title>Ultimate Color Space Hub</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -31,9 +31,7 @@
             margin-bottom: 20px;
             border: 1px solid rgba(255,255,255,0.1);
         }
-        .select-group {
-            margin-bottom: 20px;
-        }
+        .select-group { margin-bottom: 20px; }
         select {
             width: 100%;
             padding: 10px;
@@ -45,6 +43,7 @@
             outline: none;
         }
         .control-group { margin-bottom: 16px; }
+        .hidden { display: none !important; }
         label { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; color: #aaa; }
         input[type="range"] {
             width: 100%;
@@ -86,61 +85,63 @@
     <div class="select-group">
         <label>Select Input Mode:</label>
         <select id="mode-selector">
+            <option value="RGB">RGB (Red, Green, Blue)</option>
             <option value="HSL">HSL (Hue, Saturation, Lightness)</option>
             <option value="HSV">HSV (Hue, Saturation, Value)</option>
-            <option value="RGB">RGB (Red, Green, Blue)</option>
+            <option value="CMYK">CMYK (Cyan, Magenta, Yellow, Black)</option>
+            <option value="YUV">YUV (Luma, Chroma U, Chroma V)</option>
         </select>
     </div>
 
-    <div class="control-group">
-        <label><span id="sl1-lbl">Hue</span><span id="sl1-val">200°</span></label>
-        <input type="range" id="slider1" min="0" max="360" value="200">
+    <div class="control-group" id="cg1">
+        <label><span id="sl1-lbl">Red</span><span id="sl1-val">0</span></label>
+        <input type="range" id="slider1" min="0" max="255" value="0">
     </div>
 
-    <div class="control-group">
-        <label><span id="sl2-lbl">Saturation</span><span id="sl2-val">100%</span></label>
-        <input type="range" id="slider2" min="0" max="100" value="100">
+    <div class="control-group" id="cg2">
+        <label><span id="sl2-lbl">Green</span><span id="sl2-val">170</span></label>
+        <input type="range" id="slider2" min="0" max="255" value="170">
     </div>
 
-    <div class="control-group">
-        <label><span id="sl3-lbl">Lightness</span><span id="sl3-val">50%</span></label>
-        <input type="range" id="slider3" min="0" max="100" value="50">
+    <div class="control-group" id="cg3">
+        <label><span id="sl3-lbl">Blue</span><span id="sl3-val">255</span></label>
+        <input type="range" id="slider3" min="0" max="255" value="255">
+    </div>
+
+    <div class="control-group hidden" id="cg4">
+        <label><span id="sl4-lbl">Black (K)</span><span id="sl4-val">0%</span></label>
+        <input type="range" id="slider4" min="0" max="100" value="0">
     </div>
 
     <div class="outputs">
         <div class="output-title">Real-time Conversions</div>
-        <div class="output-row"><span class="label-text">HEX:</span><span id="out-hex" class="value-text">-</span></div>
-        <div class="output-row"><span class="label-text">RGB:</span><span id="out-rgb" class="value-text">-</span></div>
-        <div class="output-row"><span class="label-text">HSL:</span><span id="out-hsl" class="value-text">-</span></div>
-        <div class="output-row"><span class="label-text">HSV:</span><span id="out-hsv" class="value-text">-</span></div>
-        <div class="output-row"><span class="label-text">CMYK:</span><span id="out-cmyk" class="value-text">-</span></div>
-        <div class="output-row"><span class="label-text">YUV:</span><span id="out-yuv" class="value-text">-</span></div>
+        <div class="output-row"><span class="label-text">HEX:</span><span id="out-hex">-</span></div>
+        <div class="output-row"><span class="label-text">RGB:</span><span id="out-rgb">-</span></div>
+        <div class="output-row"><span class="label-text">HSL:</span><span id="out-hsl">-</span></div>
+        <div class="output-row"><span class="label-text">HSV:</span><span id="out-hsv">-</span></div>
+        <div class="output-row"><span class="label-text">CMYK:</span><span id="out-cmyk">-</span></div>
+        <div class="output-row"><span class="label-text">YUV:</span><span id="out-yuv">-</span></div>
     </div>
 </div>
 
 <script>
-    // Grab elements
     const modeSel = document.getElementById('mode-selector');
-    const s1 = document.getElementById('slider1');
-    const s2 = document.getElementById('slider2');
-    const s3 = document.getElementById('slider3');
+    const s1 = document.getElementById('slider1'); const s2 = document.getElementById('slider2');
+    const s3 = document.getElementById('slider3'); const s4 = document.getElementById('slider4');
+    const cg4 = document.getElementById('cg4');
     
-    const lbl1 = document.getElementById('sl1-lbl');
-    const lbl2 = document.getElementById('sl2-lbl');
-    const lbl3 = document.getElementById('sl3-lbl');
+    const lbl1 = document.getElementById('sl1-lbl'); const lbl2 = document.getElementById('sl2-lbl');
+    const lbl3 = document.getElementById('sl3-lbl'); const lbl4 = document.getElementById('sl4-lbl');
     
-    const val1 = document.getElementById('sl1-val');
-    const val2 = document.getElementById('sl2-val');
-    const val3 = document.getElementById('sl3-val');
+    const val1 = document.getElementById('sl1-val'); const val2 = document.getElementById('sl2-val');
+    const val3 = document.getElementById('sl3-val'); const val4 = document.getElementById('sl4-val');
 
     const preview = document.getElementById('preview');
 
-    // Math Converter Algorithms
+    // --- Math Conversions ---
     function hslToRgb(h, s, l) {
         s /= 100; l /= 100;
-        const c = (1 - Math.abs(2 * l - 1)) * s;
-        const x = c * (1 - Math.abs((h / 60) % 2 - 1));
-        const m = l - c / 2;
+        const c = (1 - Math.abs(2 * l - 1)) * s, x = c * (1 - Math.abs((h / 60) % 2 - 1)), m = l - c / 2;
         let r=0, g=0, b=0;
         if (h<60) {r=c; g=x;} else if (h<120) {r=x; g=c;} else if (h<180) {g=c; b=x;}
         else if (h<240) {g=x; b=c;} else if (h<300) {r=x; b=c;} else {r=c; b=x;}
@@ -149,27 +150,38 @@
 
     function hsvToRgb(h, s, v) {
         s /= 100; v /= 100;
-        const c = v * s;
-        const x = c * (1 - Math.abs((h / 60) % 2 - 1));
-        const m = v - c;
+        const c = v * s, x = c * (1 - Math.abs((h / 60) % 2 - 1)), m = v - c;
         let r=0, g=0, b=0;
         if (h<60) {r=c; g=x;} else if (h<120) {r=x; g=c;} else if (h<180) {g=c; b=x;}
         else if (h<240) {g=x; b=c;} else if (h<300) {r=x; b=c;} else {r=c; b=x;}
         return [Math.round((r+m)*255), Math.round((g+m)*255), Math.round((b+m)*255)];
     }
 
+    function cmykToRgb(c, m, y, k) {
+        c /= 100; m /= 100; y /= 100; k /= 100;
+        const r = 255 * (1 - c) * (1 - k);
+        const g = 255 * (1 - m) * (1 - k);
+        const b = 255 * (1 - y) * (1 - k);
+        return [Math.round(r), Math.round(g), Math.round(b)];
+    }
+
+    function yuvToRgb(y, u, v) {
+        const r = y + 1.140 * v;
+        const g = y - 0.395 * u - 0.581 * v;
+        const b = y + 2.032 * u;
+        return [Math.max(0, Math.min(255, Math.round(r))), Math.max(0, Math.min(255, Math.round(g))), Math.max(0, Math.min(255, Math.round(b)))];
+    }
+
     function rgbToHsl(r, g, b) {
         r /= 255; g /= 255; b /= 255;
         const max = Math.max(r, g, b), min = Math.min(r, g, b);
         let h, s, l = (max + min) / 2;
-        if (max === min) { h = s = 0; } else {
+        if (max === min) h = s = 0; else {
             const d = max - min;
             s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-            switch (max) {
-                case r: h = (g - b) / d + (g < b ? 60 : 0); break;
-                case g: h = (b - r) / d + 2; break;
-                case b: h = (r - g) / d + 4; break;
-            }
+            if (max === r) h = (g - b) / d + (g < b ? 60 : 0);
+            else if (max === g) h = (b - r) / d + 2;
+            else h = (r - g) / d + 4;
             h /= 6;
         }
         return [Math.round(h*360), Math.round(s*100), Math.round(l*100)];
@@ -178,15 +190,12 @@
     function rgbToHsv(r, g, b) {
         r /= 255; g /= 255; b /= 255;
         const max = Math.max(r, g, b), min = Math.min(r, g, b);
-        let h, s, v = max;
-        const d = max - min;
+        let h, s, v = max, d = max - min;
         s = max === 0 ? 0 : d / max;
-        if (max === min) { h = 0; } else {
-            switch (max) {
-                case r: h = (g - b) / d + (g < b ? 60 : 0); break;
-                case g: h = (b - r) / d + 2; break;
-                case b: h = (r - g) / d + 4; break;
-            }
+        if (max === min) h = 0; else {
+            if (max === r) h = (g - b) / d + (g < b ? 60 : 0);
+            else if (max === g) h = (b - r) / d + 2;
+            else h = (r - g) / d + 4;
             h /= 6;
         }
         return [Math.round(h*360), Math.round(s*100), Math.round(v*100)];
@@ -194,33 +203,35 @@
 
     function rgbToCmyk(r, g, b) {
         if (r===0 && g===0 && b===0) return [0, 0, 0, 100];
-        let c = 1 - (r / 255);
-        let m = 1 - (g / 255);
-        let y = 1 - (b / 255);
+        let c = 1 - (r / 255), m = 1 - (g / 255), y = 1 - (b / 255);
         let k = Math.min(c, Math.min(m, y));
-        c = (c - k) / (1 - k);
-        m = (m - k) / (1 - k);
-        y = (y - k) / (1 - k);
+        c = (c - k) / (1 - k); m = (m - k) / (1 - k); y = (y - k) / (1 - k);
         return [Math.round(c*100), Math.round(m*100), Math.round(y*100), Math.round(k*100)];
     }
 
     function rgbToYuv(r, g, b) {
-        // Standard BT.601 television weights matrix
         const y = 0.299 * r + 0.587 * g + 0.114 * b;
         const u = -0.14713 * r - 0.28886 * g + 0.436 * b;
         const v = 0.615 * r - 0.51499 * g - 0.10001 * b;
         return [Math.round(y), Math.round(u), Math.round(v)];
     }
 
-    // Handles user switching between drop-down modes
     function handleModeChange() {
         const mode = modeSel.value;
-        if (mode === "HSL") {
-            setupSliders("Hue", 0, 360, 200, "°", "Saturation", 0, 100, 100, "%", "Lightness", 0, 100, 50, "%");
+        cg4.classList.add('hidden'); // Hide 4th slider default
+        
+        if (mode === "RGB") {
+            setupSliders("Red",0,255,0,"", "Green",0,255,170,"", "Blue",0,255,255,"");
+        } else if (mode === "HSL") {
+            setupSliders("Hue",0,360,200,"°", "Saturation",0,100,100,"%", "Lightness",0,100,50,"%");
         } else if (mode === "HSV") {
-            setupSliders("Hue", 0, 360, 200, "°", "Saturation", 0, 100, 100, "%", "Value (Brightness)", 0, 100, 100, "%");
-        } else if (mode === "RGB") {
-            setupSliders("Red", 0, 255, 0, "", "Green", 0, 255, 149, "", "Blue", 0, 255, 255, "");
+            setupSliders("Hue",0,360,200,"°", "Saturation",0,100,100,"%", "Value (Brightness)",0,100,100,"%");
+        } else if (mode === "CMYK") {
+            cg4.classList.remove('hidden'); // Show 4th slider for CMYK
+            setupSliders("Cyan",0,100,100,"%", "Magenta",0,100,33,"%", "Yellow",0,100,0,"%");
+            lbl4.textContent = "Black (K)"; s4.min = 0; s4.max = 100; s4.value = 0; s4.dataset.unit = "%";
+        } else if (mode === "YUV") {
+            setupSliders("Luma (Y)",0,255,129,"", "Chroma U",-112,112,62,"", "Chroma V",-157,157,-113,"");
         }
         updateAll();
     }
@@ -233,45 +244,41 @@
 
     function updateAll() {
         const mode = modeSel.value;
-        const v1 = parseInt(s1.value);
-        const v2 = parseInt(s2.value);
-        const v3 = parseInt(s3.value);
+        const v1 = parseInt(s1.value); const v2 = parseInt(s2.value);
+        const v3 = parseInt(s3.value); const v4 = parseInt(s4.value);
 
         val1.textContent = v1 + (s1.dataset.unit || "");
         val2.textContent = v2 + (s2.dataset.unit || "");
         val3.textContent = v3 + (s3.dataset.unit || "");
+        val4.textContent = v4 + (s4.dataset.unit || "");
 
         let r=0, g=0, b=0;
 
-        // Base everything off our slider input mode first
-        if (mode === "HSL") [r,g,b] = hslToRgb(v1, v2, v3);
+        if (mode === "RGB") [r,g,b] = [v1, v2, v3];
+        else if (mode === "HSL") [r,g,b] = hslToRgb(v1, v2, v3);
         else if (mode === "HSV") [r,g,b] = hsvToRgb(v1, v2, v3);
-        else if (mode === "RGB") [r,g,b] = [v1, v2, v3];
+        else if (mode === "CMYK") [r,g,b] = cmykToRgb(v1, v2, v3, v4);
+        else if (mode === "YUV") [r,g,b] = yuvToRgb(v1, v2, v3);
 
-        // Process final targets
         const [h, s, l] = rgbToHsl(r, g, b);
         const [hH, sH, vV] = rgbToHsv(r, g, b);
         const [c, m, y, k] = rgbToCmyk(r, g, b);
         const [yY, uU, vV_yuv] = rgbToYuv(r, g, b);
         const hex = "#" + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
 
-        // Print outputs to screen HTML elements
         preview.style.backgroundColor = `rgb(${r},${g},${b})`;
-        document.getElementById('out-hex').textContent = hex;
-        document.getElementById('out-rgb').textContent = `rgb(${r}, ${g}, ${b})`;
-        document.getElementById('out-hsl').textContent = `hsl(${h}°, ${s}%, ${l}%)`;
-        document.getElementById('out-hsv').textContent = `hsv(${hH}°, ${sH}%, ${vV}%)`;
-        document.getElementById('out-cmyk').textContent = `cmyk(${c}%, ${m}%, ${y}%, ${k}%)`;
-        document.getElementById('out-yuv').textContent = `yuv(${yY}, ${uU}, ${vV_yuv})`;
+        document.getElementById('out-hex').innerHTML = `<span class="label-text">HEX:</span> <span class="value-text">${hex}</span>`;
+        document.getElementById('out-rgb').innerHTML = `<span class="label-text">RGB:</span> <span class="value-text">rgb(${r}, ${g}, ${b})</span>`;
+        document.getElementById('out-hsl').innerHTML = `<span class="label-text">HSL:</span> <span class="value-text">hsl(${h}°, ${s}%, ${l}%)</span>`;
+        document.getElementById('out-hsv').innerHTML = `<span class="label-text">HSV:</span> <span class="value-text">hsv(${hH}°, ${sH}%, ${vV}%)</span>`;
+        document.getElementById('out-cmyk').innerHTML = `<span class="label-text">CMYK:</span> <span class="value-text">cmyk(${c}%, ${m}%, ${y}%, ${k}%)</span>`;
+        document.getElementById('out-yuv').innerHTML = `<span class="label-text">YUV:</span> <span class="value-text">yuv(${yY}, ${uU}, ${vV_yuv})</span>`;
     }
 
-    // Event hooks
     modeSel.addEventListener('change', handleModeChange);
-    s1.addEventListener('input', updateAll);
-    s2.addEventListener('input', updateAll);
-    s3.addEventListener('input', updateAll);
+    s1.addEventListener('input', updateAll); s2.addEventListener('input', updateAll);
+    s3.addEventListener('input', updateAll); s4.addEventListener('input', updateAll);
 
-    // Bootstrap
     handleModeChange();
 </script>
 </body>
