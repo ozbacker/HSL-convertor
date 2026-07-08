@@ -6,6 +6,14 @@
     <title>Ultimate Color Space Hub & Educational Design Studio</title>
     <style>
         body {
+            <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Color Space Hub & Professional Design Studio</title>
+    <style>
+        body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: #121214;
             color: #ffffff;
@@ -41,11 +49,28 @@
             margin-bottom: 20px;
             border: 1px solid rgba(255,255,255,0.1);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             font-weight: bold;
             font-size: 14px;
             transition: color 0.2s;
+            gap: 8px;
+        }
+        .eyedropper-btn {
+            background: rgba(0, 0, 0, 0.4);
+            color: #00ffcc;
+            border: 1px solid #00ffcc;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .eyedropper-btn:hover {
+            background: #00ffcc;
+            color: #121214;
         }
         .select-group { margin-bottom: 20px; }
         select {
@@ -62,7 +87,6 @@
         .hidden { display: none !important; }
         label { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; color: #aaa; }
         
-        /* Gradient Slider Overrides */
         input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
@@ -97,12 +121,8 @@
             border: 1px solid rgba(255,255,255,0.1);
             cursor: pointer;
         }
-        .palette-label {
-            font-size: 10px;
-            color: #aaa;
-            text-align: center;
-            margin-top: 4px;
-        }
+        .palette-label { font-size: 10px; color: #aaa; text-align: center; margin-top: 4px; }
+        
         .accessibility-box {
             background: #26262b;
             padding: 12px;
@@ -110,16 +130,12 @@
             margin-top: 8px;
             font-size: 13px;
         }
-        .score-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 6px;
-        }
+        .score-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
         .score-row:last-child { margin-bottom: 0; }
         .pass { color: #00ffcc; font-weight: bold; }
         .fail { color: #ff5555; font-weight: bold; }
 
-        .outputs {
+        .outputs, .dev-codes {
             background: #26262b;
             padding: 14px;
             border-radius: 8px;
@@ -147,7 +163,6 @@
         .label-text { color: #aaa; }
         .value-text { color: #fff; font-weight: bold; }
         
-        /* Educational Article Layout */
         .article-section {
             background: #1a1a1e;
             padding: 32px;
@@ -185,7 +200,7 @@
             opacity: 0;
             transition: opacity 0.3s;
             pointer-events: none;
-            zIndex: 1000;
+            z-index: 1000;
         }
     </style>
 </head>
@@ -194,7 +209,10 @@
 <div class="container">
     <div class="card">
         <h2>Color Hub Ultra</h2>
-        <div id="preview" class="preview">Text Visibility Test</div>
+        <div id="preview" class="preview">
+            <span>Text Visibility Test</span>
+            <button class="eyedropper-btn" id="eyedropper-btn">Sample Screen Pixel</button>
+        </div>
 
         <div class="select-group">
             <label>Select Input Mode:</label>
@@ -208,8 +226,8 @@
         </div>
 
         <div class="control-group" id="cg1"><label><span id="sl1-lbl">Red</span><span id="sl1-val">0</span></label><input type="range" id="slider1"></div>
-        <div class="control-group" id="cg2"><label><span id="sl2-lbl">Green</span><span id="sl2-val">0</span></label><input type="range" id="slider2"></div>
-        <div class="control-group" id="cg3"><label><span id="sl3-lbl">Blue</span><span id="sl3-val">0</span></label><input type="range" id="slider3"></div>
+        <div class="control-group" id="cg2"><label><span id="sl2-lbl">Green</span><span id="sl2-val">170</span></label><input type="range" id="slider2"></div>
+        <div class="control-group" id="cg3"><label><span id="sl3-lbl">Blue</span><span id="sl3-val">255</span></label><input type="range" id="slider3"></div>
         <div class="control-group hidden" id="cg4"><label><span id="sl4-lbl">Black (K)</span><span id="sl4-val">0%</span></label><input type="range" id="slider4"></div>
 
         <div class="accessibility-section">
@@ -240,6 +258,13 @@
             <div class="output-row" onclick="copyTextFromElement('out-cmyk')"><span class="label-text">CMYK:</span><span id="out-cmyk" class="value-text">-</span></div>
             <div class="output-row" onclick="copyTextFromElement('out-yuv')"><span class="label-text">YUV:</span><span id="out-yuv" class="value-text">-</span></div>
         </div>
+
+        <div class="dev-codes">
+            <div class="output-title">Developer Export Snippets</div>
+            <div class="output-row" onclick="copyTextFromElement('code-tw')"><span class="label-text">Tailwind:</span><span id="code-tw" class="value-text">-</span></div>
+            <div class="output-row" onclick="copyTextFromElement('code-css')"><span class="label-text">CSS Var:</span><span id="code-css" class="value-text">-</span></div>
+            <div class="output-row" onclick="copyTextFromElement('code-sass')"><span class="label-text">Sass:</span><span id="code-sass" class="value-text">-</span></div>
+        </div>
     </div>
 
     <div class="article-section">
@@ -249,33 +274,13 @@
         <h3>The Core Color Models Explained</h3>
         <table>
             <thead>
-                <tr>
-                    <th>Space</th>
-                    <th>Primary Dimensions</th>
-                    <th>Primary Medium</th>
-                </tr>
+                <tr><th>Space</th><th>Primary Dimensions</th><th>Primary Medium</th></tr>
             </thead>
             <tbody>
-                <tr>
-                    <td><strong>RGB</strong></td>
-                    <td>Red, Green, Blue</td>
-                    <td>Digital Displays & Emissive Light</td>
-                </tr>
-                <tr>
-                    <td><strong>HSL</strong></td>
-                    <td>Hue, Saturation, Lightness</td>
-                    <td>UI Styling & Intuitive Design Mapping</td>
-                </tr>
-                <tr>
-                    <td><strong>CMYK</strong></td>
-                    <td>Cyan, Magenta, Yellow, Key (Black)</td>
-                    <td>Physical Paper Ink Subtractive Printing</td>
-                </tr>
-                <tr>
-                    <td><strong>YUV</strong></td>
-                    <td>Luma (Y), Chroma Blue (U), Chroma Red (V)</td>
-                    <td>Television Signals & Video Compression</td>
-                </tr>
+                <tr><td><strong>RGB</strong></td><td>Red, Green, Blue</td><td>Digital Displays & Emissive Light</td></tr>
+                <tr><td><strong>HSL</strong></td><td>Hue, Saturation, Lightness</td><td>UI Styling & Intuitive Design Mapping</td></tr>
+                <tr><td><strong>CMYK</strong></td><td>Cyan, Magenta, Yellow, Key (Black)</td><td>Physical Paper Ink Subtractive Printing</td></tr>
+                <tr><td><strong>YUV</strong></td><td>Luma (Y), Chroma Blue (U), Chroma Red (V)</td><td>Television Signals & Video Compression</td></tr>
             </tbody>
         </table>
 
@@ -299,8 +304,11 @@
     const val3 = document.getElementById('sl3-val'); const val4 = document.getElementById('sl4-val');
     const preview = document.getElementById('preview');
     const toast = document.getElementById('toast');
+    const eyeBtn = document.getElementById('eyedropper-btn');
 
-    // Basic Math Algorithms
+    let isUpdatingUrl = false;
+
+    // Core Algorithms
     function hslToRgb(h, s, l) {
         s /= 100; l /= 100;
         const c = (1 - Math.abs(2 * l - 1)) * s, x = c * (1 - Math.abs((h / 60) % 2 - 1)), m = l - c / 2;
@@ -357,29 +365,19 @@
     function rgbToYuv(r, g, b) {
         return [Math.round(0.299*r + 0.587*g + 0.114*b), Math.round(-0.14713*r - 0.28886*g + 0.436*b), Math.round(0.615*r - 0.51499*g - 0.10001*b)];
     }
-
-    // Official W3C Relative Luminance Formula
-    function getLuminance(r, g, b) {
-        let [aR, aG, aB] = [r/255, g/255, b/255].map(v => {
-            return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
-        });
-        return 0.2126 * aR + 0.7152 * aG + 0.0722 * aB;
+    function hexToRgb(hex) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : [0,0,0];
     }
 
+    function getLuminance(r, g, b) {
+        let [aR, aG, aB] = [r/255, g/255, b/255].map(v => v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
+        return 0.2126 * aR + 0.7152 * aG + 0.0722 * aB;
+    }
     function calculateContrast(r, g, b) {
         const bgLum = getLuminance(r, g, b);
-        const whiteLum = 1.0;
-        const blackLum = 0.0;
-        
-        const contrastWithWhite = (whiteLum + 0.05) / (bgLum + 0.05);
-        const contrastWithBlack = (bgLum + 0.05) / (blackLum + 0.05);
-        
-        // Return optimal text properties
-        if (contrastWithWhite >= contrastWithBlack) {
-            return { ratio: contrastWithWhite, textCol: '#ffffff' };
-        } else {
-            return { ratio: contrastWithBlack, textCol: '#121214' };
-        }
+        const cw = (1.0 + 0.05) / (bgLum + 0.05), cb = (bgLum + 0.05) / (0.0 + 0.05);
+        return cw >= cb ? { ratio: cw, textCol: '#ffffff' } : { ratio: cb, textCol: '#121214' };
     }
 
     function handleModeChange() {
@@ -402,13 +400,12 @@
 
     window.copyValue = function(val) {
         navigator.clipboard.writeText(val).then(() => {
-            toast.style.opacity = "1";
-            setTimeout(() => { toast.style.opacity = "0"; }, 1200);
+            toast.style.opacity = "1"; setTimeout(() => { toast.style.opacity = "0"; }, 1200);
         });
     }
     window.copyTextFromElement = function(id) { copyValue(document.getElementById(id).textContent); }
 
-    function updateAll() {
+    function updateAll(skipUrlUpdate = false) {
         const mode = modeSel.value;
         const v1 = parseInt(s1.value), v2 = parseInt(s2.value), v3 = parseInt(s3.value), v4 = parseInt(s4.value);
         
@@ -425,7 +422,7 @@
         const [yY, uU, vV_yuv] = rgbToYuv(r, g, b);
         const hex = "#" + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
 
-        // Apply visual slider backgrounds based on mode properties
+        // Update Slider Gradients
         if (mode === "RGB") {
             s1.style.background = `linear-gradient(to right, rgb(0,${g},${b}), rgb(255,${g},${b}))`;
             s2.style.background = `linear-gradient(to right, rgb(${r},0,${b}), rgb(${r},255,${b}))`;
@@ -437,20 +434,16 @@
             s3.style.background = `linear-gradient(to right, #000, hsl(${h}, ${s}%, 50%), #fff)`;
             val1.textContent = v1 + "°"; val2.textContent = v2 + "%"; val3.textContent = v3 + "%";
         } else if (mode === "CMYK") {
-            s1.style.background = `linear-gradient(to right, #fff, cyan)`;
-            s2.style.background = `linear-gradient(to right, #fff, magenta)`;
-            s3.style.background = `linear-gradient(to right, #fff, yellow)`;
-            s4.style.background = `linear-gradient(to right, transparent, #000)`;
+            s1.style.background = `linear-gradient(to right, #fff, cyan)`; s2.style.background = `linear-gradient(to right, #fff, magenta)`;
+            s3.style.background = `linear-gradient(to right, #fff, yellow)`; s4.style.background = `linear-gradient(to right, transparent, #000)`;
             val1.textContent = v1 + "%"; val2.textContent = v2 + "%"; val3.textContent = v3 + "%"; val4.textContent = v4 + "%";
         } else {
             s1.style.background = "#333"; s2.style.background = "#333"; s3.style.background = "#333";
             val1.textContent = v1; val2.textContent = v2; val3.textContent = v3;
         }
 
-        // Handle text contrast evaluations
         const check = calculateContrast(r, g, b);
-        preview.style.backgroundColor = hex;
-        preview.style.color = check.textCol;
+        preview.style.backgroundColor = hex; preview.style.color = check.textCol;
         
         document.getElementById('contrast-ratio').textContent = check.ratio.toFixed(2) + ":1";
         document.getElementById('aa-normal').className = check.ratio >= 4.5 ? 'pass' : 'fail';
@@ -465,11 +458,23 @@
         document.getElementById('out-cmyk').textContent = `cmyk(${c}%, ${m}%, ${y}%, ${k}%)`;
         document.getElementById('out-yuv').textContent = `yuv(${yY}, ${uU}, ${vV_yuv})`;
 
-        // Render palette boxes
+        // Dev Codes Updates
+        document.getElementById('code-tw').textContent = `bg-[${hex}]`;
+        document.getElementById('code-css').textContent = `--primary-color: ${hex};`;
+        document.getElementById('code-sass').textContent = `$color-primary: ${hex};`;
+
         setPaletteBox('p-comp', hslToRgb((h + 180) % 360, s, l));
         setPaletteBox('p-an1', hslToRgb((h + 30) % 360, s, l));
         setPaletteBox('p-an2', hslToRgb((h - 30 + 360) % 360, s, l));
         setPaletteBox('p-mono', hslToRgb(h, s, Math.max(15, l - 25)));
+
+        // Live URL Sync Logic
+        if (!skipUrlUpdate) {
+            isUpdatingUrl = true;
+            const newUrl = `${window.location.pathname}?hex=${hex.substring(1)}`;
+            window.history.replaceState({ path: newUrl }, '', newUrl);
+            setTimeout(() => { isUpdatingUrl = false; }, 50);
+        }
     }
 
     function setPaletteBox(id, rgb) {
@@ -478,10 +483,40 @@
         el.style.backgroundColor = hex; el.dataset.color = hex;
     }
 
+    // Load initial state out of address URL query params if present
+    function loadFromUrlParams() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const hexParam = urlParams.get('hex');
+        if (hexParam && /^[0-9F-Fa-f]{6}$/.test(hexParam)) {
+            const [r, g, b] = hexToRgb('#' + hexParam);
+            modeSel.value = "RGB";
+            setupSliders("Red",0,255,r, "Green",0,255,g, "Blue",0,255,b);
+            updateAll(true);
+        } else {
+            handleModeChange();
+        }
+    }
+
+    // Native Eyedropper API Tool implementation
+    if ('EyeDropper' in window) {
+        eyeBtn.addEventListener('click', () => {
+            const eyeDropper = new EyeDropper();
+            eyeDropper.open().then(result => {
+                const [r, g, b] = hexToRgb(result.sRGBHex);
+                modeSel.value = "RGB";
+                setupSliders("Red",0,255,r, "Green",0,255,g, "Blue",0,255,b);
+                updateAll();
+            }).catch(() => {});
+        });
+    } else {
+        eyeBtn.style.display = 'none'; // Safely hide button if browser layout engine lacks API
+    }
+
     modeSel.addEventListener('change', handleModeChange);
-    s1.addEventListener('input', updateAll); s2.addEventListener('input', updateAll);
-    s3.addEventListener('input', updateAll); s4.addEventListener('input', updateAll);
-    handleModeChange();
+    s1.addEventListener('input', () => updateAll()); s2.addEventListener('input', () => updateAll());
+    s3.addEventListener('input', () => updateAll()); s4.addEventListener('input', () => updateAll());
+    
+    loadFromUrlParams();
 </script>
 </body>
 </html>
